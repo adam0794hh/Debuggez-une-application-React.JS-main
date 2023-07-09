@@ -9,7 +9,7 @@ const mockContactApi = () => new Promise((resolve) => { setTimeout(resolve, 1000
 
 const Form = ({ onSuccess, onError }) => {
   const [sending, setSending] = useState(false);
-  const[message, setMessage] = useState('');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const sendContact = useCallback(
     async (evt) => {
       evt.preventDefault();
@@ -18,14 +18,13 @@ const Form = ({ onSuccess, onError }) => {
       try {
         await mockContactApi();
         setSending(false);
-        setMessage("envoi avec succés")
-        console.log(onSuccess)
+        onSuccess()
+        setShowSuccessMessage(!showSuccessMessage);
         
       } catch (err) {
         setSending(false);
         onError(err);
-        setMessage("echec de l'envoi: ",err)
-        console.log(err)
+        
       }
     },
     [onSuccess, onError]
@@ -47,7 +46,6 @@ const Form = ({ onSuccess, onError }) => {
           <Button type={BUTTON_TYPES.SUBMIT} disabled={sending}>
             {sending ? "En cours" : "Envoyer"}
           </Button>
-          {message && (<p className="msg">{message}</p>)}
         </div>
         <div className="col">
           <Field
