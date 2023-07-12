@@ -1,8 +1,8 @@
+import React from "react";
 import Menu from "../../containers/Menu";
 import ServiceCard from "../../components/ServiceCard";
 import EventCard from "../../components/EventCard";
 import PeopleCard from "../../components/PeopleCard";
-
 import "./style.scss";
 import EventList from "../../containers/Events";
 import Slider from "../../containers/Slider";
@@ -12,9 +12,23 @@ import Form from "../../containers/Form";
 import Modal from "../../containers/Modal";
 import { useData } from "../../contexts/DataContext";
 
+
 const Page = () => {
-  const last = useData()
-  
+  const last = useData();
+
+  let lastEvent = null;
+  let lastEventMonth = 0;
+
+  last?.data?.events?.forEach(event => {
+    const eventDate = new Date(event.date);
+    const eventMonth = eventDate.getMonth();
+
+    if (!lastEvent || eventMonth > lastEventMonth) {
+      lastEvent = event;
+      lastEventMonth = eventMonth;
+    }
+  });
+  console.log(lastEvent);
   return <>
     <header>
       <Menu />
@@ -118,10 +132,10 @@ const Page = () => {
       <div className="col presta">
         <h3>Notre derniére prestation</h3>
         <EventCard
-          imageSrc={last?.data?.events?.[3]?.cover || ""}
+          imageSrc={lastEvent?.cover || ""}
           imageAlt="Image Alt Text"
-          date={last?.data?.events?.[3]?.date ? new Date(last?.data?.events[3]?.date) : new Date()}
-          title={last?.data?.events?.[3]?.title || ""}
+          date={lastEvent?.date ? new Date(lastEvent.date) : new Date()}
+          title={lastEvent.title || ""}
           small
           label="boom"
         />
